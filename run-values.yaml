@@ -1,0 +1,18 @@
+profile: run
+
+ceip_policy_disclosed: true # Installation fails if this is set to 'false'
+
+contour:
+  envoy:
+    service:
+      type: LoadBalancer
+
+shared:
+  ingress_domain: aws.tanzu-tmm-demo.com
+  ingress_issuer: ""
+
+appliveview_connector:
+  backend:
+    ingressEnabled: true
+    sslDisabled: "true"
+    host: appliveview.tanzu-tmm-demo.com

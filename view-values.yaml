@@ -1,0 +1,81 @@
+profile: view
+
+ceip_policy_disclosed: true # Installation fails if this is set to 'false'
+
+learningcenter:
+  ingressDomain: tanzu-tmm-demo.com
+
+contour:
+  envoy:
+    service:
+      type: LoadBalancer
+
+appliveview:
+  ingressEnabled: true
+  ingressDomain: tanzu-tmm-demo.com
+
+shared:
+  ingress_domain: tanzu-tmm-demo.com
+  ingress_issuer: ""
+
+tap_gui:
+  service_type: ClusterIP 
+  app_config:
+    auth:
+      allowGuestAccess: true
+      environment: development
+      providers:
+        gitlab:
+          development:
+            clientId: <redacated>
+            clientSecret: <redacted>
+    proxy:
+          /metadata-store:
+            target: https://metadata-store-app.metadata-store:8443/api/v1
+            changeOrigin: true
+            secure: false
+            headers:
+              # Copied token from view cluster
+              Authorization: "Bearer <redacted>"
+              X-Custom-Source: project-star
+    integrations:
+      github: # Other integrations available see NOTE below
+        - host: github.com
+          token: <redacted>
+    catalog:
+      locations:
+        - type: url
+          target: https://github.com/ryan-a-baker/tap-gui-catalog/blob/master/catalog-info.yaml
+    backend:
+        database:
+          client: pg
+          connection:
+            host: <redacted>
+            port: 5432
+            user: <redacted>
+            password: <redacted>
+            ssl: {rejectUnauthorized: false} # Set to true if using SSL
+    kubernetes:
+      serviceLocatorMethod:
+        type: 'multiTenant'
+      clusterLocatorMethods:
+        - type: 'config'
+          clusters:
+            - url: https://<redacted>.yl4.us-west-1.eks.amazonaws.com
+              name: tap-build
+              authProvider: serviceAccount
+              serviceAccountToken: <redacted>
+              skipTLSVerify: true
+              skipMetricsLookup: true
+            - url: https://<redacted>.yl4.us-west-1.eks.amazonaws.com
+              name: tap-run-eks-prod
+              authProvider: serviceAccount
+              serviceAccountToken: <redacted>
+              skipTLSVerify: true
+              skipMetricsLookup: true
+            - url: https://<redacted>.yl4.us-west-1.eks.amazonaws.com
+              name: tap-run-eks-stage
+              authProvider: serviceAccount
+               serviceAccountToken: <redacted>
+              skipTLSVerify: true
+              skipMetricsLookup: true
